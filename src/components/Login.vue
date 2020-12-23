@@ -29,6 +29,8 @@
 
 <script>
 
+import axios from "axios";
+
 export default {
   name: "login",
   data() {
@@ -41,18 +43,28 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      let that = this;
+      that.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.user.username === "123" && this.user.password === "123") {
-            this.$message({
-              message : '登录成功',
-              type: 'success'
-            });
-            sessionStorage.setItem("user", JSON.stringify(this.user));
-            this.$router.push({ path: "/home" });
-          } else {
-            alert('账号密码错误!');
-          }
+          axios({
+            method:'POST',
+            url: localStorage.getItem("url") + 'user/adminLogin',
+            data: that.user
+          }).then(function(res){
+            if (res.data.code === 0) {
+              that.$message({
+                message : '登录成功',
+                type: 'success'
+              });
+              localStorage.setItem("user", JSON.stringify(res.data.user));
+              that.$router.push({path: '/home'})
+            } else {
+              that.$message.error(res.data.msg);
+            }
+          }).catch(function (e){
+            that.$message.error('登录失败！');
+            console.log(e);
+          });
         } else {
           console.log('error submit!!');
           return false;

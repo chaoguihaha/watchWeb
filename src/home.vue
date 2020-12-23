@@ -33,13 +33,12 @@
         </div>
         <div  class="div-right">
           欢迎您：
-          <el-dropdown trigger="click">
+          <el-dropdown trigger="click" @command="handleCommand">
             <span class="el-dropdown-link">
-              {{sessionStorage.getItem("user").username}}<i class="el-icon-arrow-down el-icon-caret-bottom"></i>
+              {{user.username}}<i class="el-icon-arrow-down el-icon-caret-bottom"></i>
             </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-user" @click="userInfo()">个人中心</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-switch-button" @click="outLogin()">退出登录</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-switch-button" command="out">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
         </div>
@@ -53,6 +52,7 @@
 </template>
 
 <script>
+import app from './App';
 
 export default {
   name: "home",
@@ -63,28 +63,29 @@ export default {
     }
   },
   beforeMount() {
-    console.log(JSON.parse(sessionStorage.getItem("user")));
-    this.$data.uesr = JSON.parse(sessionStorage.getItem("user"));
-    console.log(this.$data.user);
-    if (this.$data.user === null) {
+    let getUser = localStorage.getItem("user");
+    app.user = JSON.parse(getUser);
+    if (app.user === null) {
       alert("请先登录！");
-      this.$router.push({path:'/'})
+      this.$router.push({path:'/'});
+    } else {
+      this.user = app.user;
     }
+    console.log(this.user);
   },
-  // created() {
-  //
-  // },
   methods: {
     // eslint-disable-next-line no-unused-vars
     menuClick(e, name) {
       this.$router.push({path:'/' + e})
       this.$data.titleName = name;
     },
-    userInfo() {
-
-    },
-    outLogin() {
-
+    handleCommand(command) {
+      if (command === 'out') {
+        // 退出登录
+        localStorage.removeItem("user");
+        this.$message({message:'退出登录！', type:'success'});
+        this.$router.push({path: '/'})
+      }
     }
   },
 }
