@@ -1,7 +1,7 @@
 <template>
   <div id="card">
 
-    <img id = "logo" alt="Vue logo" src="../assets/logo.png">
+    <img id = "logo" alt="Vue logo" src="../assets/static/logo.png">
 
     <el-form :model="user" ref="user" label-width="auto" class="demo-dynamic">
       <el-form-item
